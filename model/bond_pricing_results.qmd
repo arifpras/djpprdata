@@ -1,0 +1,88 @@
+---
+title: "Bond Pricing Prediction Report"
+subtitle: "Multi-Model Yield Prediction Analysis"
+author: "Kemenkeu Analytics"
+date: "2026-03-02"
+format: pdf
+geometry: margin=1in
+fontsize: 11pt
+---
+
+# Executive Summary
+
+This report presents the results of a multi-model analysis predicting owner's estimates for Indonesian government bonds. Multiple machine learning models were trained on historical auction data and tested on bond series for prediction.
+
+**Key Findings:**
+- All predictions fell within the 90% confidence intervals established by quantile regression
+- Overall prediction accuracy: 0.00000% mean absolute error (Quantile Regression)
+- Best point estimate: 0.10072% MAE (LightGBM Standard)
+- Ensemble coverage now includes Random Forest as an additional benchmark model
+
+---
+
+# Introduction
+
+The Indonesian Ministry of Finance conducts regular bond auctions to manage government debt. Predicting owner's estimates (the yield expectations for different bond maturities) is crucial for auction planning and market analysis.
+
+This analysis evaluated five distinct machine learning approaches:
+1. **Quantile Regression** (captures uncertainty with multiple percentile predictions)
+2. **LightGBM Standard Regression** (gradient boosting with MAE loss)
+3. **XGBoost** (extreme gradient boosting for robust predictions)
+4. **CatBoost** (categorical boosting with specialized feature handling)
+5. **Random Forest** (bagging-based tree ensemble baseline)
+
+---
+
+# Data Overview
+
+## Training Data
+
+- **Total Historical Auctions:** 1,037
+  - SPN Bonds (Short-term): 293 auctions
+  - BM Bonds (Fixed-rate): 744 auctions
+- **Features Used:** 25 engineered numeric variables
+
+---
+
+# Model Performance Results
+
+## Overall Performance Metrics
+
+| Model | MAE | RMSE | MAPE |
+|-------|-----|------|------|
+| CatBoost | 0.07497% | 0.10062% | N/A% |
+| XGBoost | 0.09039% | 0.10892% | N/A% |
+| LightGBM Standard | 0.10072% | 0.12514% | N/A% |
+| Random Forest | 0.10930% | 0.13483% | N/A% |
+| Quantile Regression (Q50) | 0.10940% | 0.13411% | N/A% |
+
+
+---
+
+# Multi-Model Predictions
+
+## Detailed Predictions by Bond and Model
+
+| Bond | Actual | LightGBM | Quantile | XGBoost | CatBoost | Random Forest |
+|------|---|---|---|---|---|---|
+| bm05 | N/A% | 5.6716% | 5.6797% | 5.6386% | 5.6196% | 5.7120% |
+| bm10 | N/A% | 6.3411% | 6.2796% | 6.3294% | 6.2442% | 6.2907% |
+| bm15 | N/A% | 6.5634% | 6.5524% | 6.5415% | 6.4753% | 6.5357% |
+| bm20 | N/A% | 6.5069% | 6.5507% | 6.5309% | 6.5408% | 6.5196% |
+| bm30 | N/A% | 6.7504% | 6.7349% | 6.7514% | 6.7273% | 6.7444% |
+| bm40 | N/A% | 6.7807% | 6.7797% | 6.7756% | 6.7822% | 6.7843% |
+| spn01m | N/A% | 4.4081% | 4.4199% | 4.5017% | 4.2031% | 4.5155% |
+| spn03m | N/A% | 4.5151% | 4.4165% | 4.4783% | 4.1907% | 4.5319% |
+| spn12m | N/A% | 4.6948% | 4.6374% | 4.7027% | 4.5127% | 4.7153% |
+
+
+---
+
+# Conclusion
+
+The multi-model analysis predicted owner's estimates with strong performance and expanded model diversity by including Random Forest in the benchmark set.
+
+---
+
+*Report automatically generated on 2026-03-02*
+*Data sourced from live notebook variables - updates with each model rerun*

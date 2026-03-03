@@ -1,0 +1,84 @@
+Middle East escalation re-prices energy and global risk appetite
+------------------------------------------------------------
+
+Event Synopsis
+• Over the last 24 hours, U.S.–Israeli strikes on Iran intensified market focus on potential oil-supply disruption risks, particularly through the Strait of Hormuz (a critical global transit route). (Source: The Wall Street Journal)
+• Markets are treating this as an inflation-risk shock rather than a growth-positive impulse, given the risk of higher fuel and shipping costs feeding into consumer prices. (Source: AP News)
+
+Cross-Asset Market Reaction
+• Government bonds: U.S. 10Y yield ~4.00% (little changed); Indonesia 10Y ~6.40% (little changed). (Source: Bank Indonesia)
+• FX: DXY ~97.79 (little changed); USD/IDR ~16,750 (little changed). EUR/USD and USD/JPY were not reliably observable from primary sources within the last 24 hours in the material reviewed. (Source: Bank Indonesia)
+• Commodities: Brent around the low-$70s area (risk premium elevated); gold up on safe-haven demand. (Source: The Wall Street Journal)
+
+Policy Relevance
+• Inflation outlook: Upside risk rises via energy, freight, and insurance costs; second-round effects are the key uncertainty (wage/price behavior and pass-through). (Source: AP News)
+• Financial stability and policy space: A sustained oil shock would tighten financial conditions and can reduce room for rate cuts globally, especially for oil-importing EMs exposed to FX depreciation. (Source: The Wall Street Journal)
+
+Forward Watch Points
+• Monitor tangible signs of physical disruption (shipping delays, insurance spikes, tanker diversions) rather than headlines alone; these will determine whether the shock persists. (Source: The Wall Street Journal)
+• Watch near-term inflation expectations and breakevens; a sharp rise would force more restrictive policy signaling even if growth slows. (Source: AP News)
+
+------------------------------------------------------------
+
+Indonesia: rupiah stability indicators show easier global rates backdrop, but external-risk premium remains the swing factor
+------------------------------------------------------------
+
+Event Synopsis
+• Bank Indonesia’s latest stability update (dated Feb 27, 2026) showed: rupiah at ~16,750 per USD (bid), Indonesia 10Y SBN yield down to ~6.40–6.41%, DXY ~97.79, and U.S. 10Y ~4.004%. (Source: Bank Indonesia)
+• Separately, Indonesia executed sizeable offshore issuance (Dim Sum and euro bonds), reinforcing funding access but increasing market sensitivity to global risk sentiment and term premia. (Source: IFR)
+
+Cross-Asset Market Reaction
+• Government bonds: U.S. 10Y ~4.00% (little changed); Indonesia 10Y ~6.40% (down modestly vs prior close). (Source: Bank Indonesia)
+• FX: DXY ~97.79 (little changed); USD/IDR ~16,750 (steady). (Source: Bank Indonesia)
+• Commodities: Brent in the low-$70s risk zone matters for Indonesia mainly through imported inflation and current-account sensitivity; gold firmer supports risk-off hedging demand. (Source: AP News)
+
+Policy Relevance
+• Exchange-rate stability and capital flows: Stable USD/IDR alongside lower SBN yields suggests near-term conditions are manageable, but external shocks (oil/geopolitics) can rapidly widen Indonesia’s risk premium. (Source: Bank Indonesia)
+• Fiscal/monetary policy space: Offshore issuance confirms market access, but higher global volatility raises refinancing costs and increases the value of policy credibility (inflation anchor, FX management, and coordination). (Source: IFR)
+
+Forward Watch Points
+• Track non-resident flows in SBN and equities and any evidence of hedging stress; these are early-warning signals for rupiah pressure during geopolitical risk spikes. (Source: Bank Indonesia)
+• Monitor how new external borrowing prices relative to peers; widening new-issue concessions would signal tightening external financing conditions. (Source: IFR)
+
+------------------------------------------------------------
+
+U.S. rates: softer dollar tone as Treasury yields sit near recent lows
+------------------------------------------------------------
+
+Event Synopsis
+• Over the past 24 hours of market commentary, the dollar was described as slipping alongside falling U.S. 10-year yields, reflecting a “lower yields, softer dollar” impulse even as some U.S. data points were firm. (Source: Nasdaq/Barchart)
+• This mix keeps markets sensitive to the balance between “sticky inflation” signals and risk-off flows into duration. (Source: Nasdaq/Barchart)
+
+Cross-Asset Market Reaction
+• Government bonds: U.S. 10Y ~4.00% (near recent lows); Indonesia 10Y ~6.40% (little changed). (Source: Bank Indonesia)
+• FX: DXY ~97.79 (softer bias); USD/IDR ~16,750 (little changed). EUR/USD and USD/CNH were not reliably observable from primary sources within the last 24 hours in the material reviewed; USD/JPY remained near mid-150s in broader coverage but not confirmed by a primary-market feed here. (Source: Bank Indonesia)
+• Commodities: Gold firmer (safe-haven plus softer-dollar impulse); oil dominated by geopolitical premium. (Source: AP News)
+
+Policy Relevance
+• Inflation and growth: Lower long yields typically ease financial conditions, but if the driver is risk-off (not confidence), it can coincide with weaker growth expectations and tighter private credit. (Source: Nasdaq/Barchart)
+• Spillovers to EMs: A softer DXY reduces immediate FX stress, but any renewed oil-driven inflation shock could reverse the move quickly and re-tighten global dollar liquidity. (Source: AP News)
+
+Forward Watch Points
+• Watch whether yields fall because inflation expectations decline (benign) or because growth expectations deteriorate (risk-off); the policy response differs. (Source: Nasdaq/Barchart)
+• Track upcoming high-frequency U.S. inflation and labor signals for confirmation; markets are trading “data dependency” aggressively. (Source: Nasdaq/Barchart)
+
+------------------------------------------------------------
+
+Oil and gold: commodities reassert macro influence as “inflation risk” returns to the center of the policy debate
+------------------------------------------------------------
+
+Event Synopsis
+• Oil is being treated as the primary transmission channel from geopolitics to the macro outlook, with market discussion centered on the risk of a sharp crude spike if tanker flows face sustained disruption. (Source: The Wall Street Journal)
+• Gold strengthened as a hedge against both geopolitical risk and inflation uncertainty, consistent with a cautious risk backdrop. (Source: AP News)
+
+Cross-Asset Market Reaction
+• Government bonds: U.S. 10Y ~4.00% (little changed); Indonesia 10Y ~6.40% (little changed). (Source: Bank Indonesia)
+• FX: DXY ~97.79 (little changed); USD/IDR ~16,750 (little changed). (Source: Bank Indonesia)
+• Commodities: Brent in the low-$70s area with elevated risk premium; WTI directionally aligned; gold higher on safe-haven demand. (Source: AP News)
+
+Policy Relevance
+• Inflation and expectations management: A persistent oil shock can lift near-term CPI and inflation expectations even if demand weakens, complicating communication and potentially delaying easing cycles. (Source: The Wall Street Journal)
+• External balances and FX: Oil-importing economies face a double hit—worse trade balance and higher inflation—raising the probability of FX depreciation and imported inflation. (Source: AP News)
+
+Forward Watch Points
+• Monitor whether crude strength is “fear premium” only or reflects real supply loss;

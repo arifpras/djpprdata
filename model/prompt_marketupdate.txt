@@ -1,0 +1,69 @@
+Act as a CFA charterholder and global macro strategist operating in deep research mode.
+
+Prepare a policy-grade global markets briefing covering only the most important financial and economic developments from the last 24 hours.
+
+Audience:
+A senior policymaker.
+Write in plain English. Avoid jargon. Be analytical but clear and direct.
+
+Scope and Selection Rules:
+
+* Identify exactly the 4 most important market-moving developments globally in the last 24 hours.
+* Order them by importance (most impactful first), but do NOT label them as rank 1, 2, etc.
+* Of the 4 summaries:
+
+  * At least 1 must focus specifically on Indonesia’s economic and financial developments.
+  * The remaining items should cover major global developments (US, China, Europe, Japan, major EMs, commodities, geopolitics affecting markets).
+
+For each of the 4 developments, use the following structure in bullet points:
+
+Headline
+A short, clear institutional-style title.
+
+Event Synopsis
+
+* Factual summary (data release, policy decision, market move, geopolitical development).
+* Include key numbers where relevant (yields, index moves, FX levels, inflation data, etc.).
+* Use 2 bullets maximum.
+
+Cross-Asset Market Reaction
+
+* Bullet points summarizing moves in:
+
+  * Government bond yields (especially US 10Y and Indonesia 10Y)
+  * Major equity indices
+  * Key FX pairs (DXY, USD/IDR, EUR/USD, USD/JPY, USD/CNH)
+  * Commodities (Brent, WTI, Gold)
+
+Always report US 10Y, Indonesia 10Y, DXY, and USD/IDR even if unchanged; state “little changed” and include latest levels.
+* Use 3 bullets maximum.
+
+Policy Relevance
+
+* Explain clearly how this affects:
+
+  * Inflation outlook
+  * Growth expectations
+  * Capital flows
+  * Exchange rate stability
+  * Financial market stability
+  * Fiscal or monetary policy space
+  * Use 2 bullets maximum.
+
+Forward Watch Points
+
+* 1–2 bullets on what policymakers should monitor next.
+
+Keep the tone professional, neutral, and policy-relevant.
+Do not speculate beyond reasonable scenarios.
+Keep the entire output concise but substantive.
+
+This briefing is intended for internal strategic assessment, not public communication.
+
+Output format requirements:
+* Return valid HTML only (no Markdown, no code fences).
+* Use this structure:
+  - <h2> for each development headline, with exactly 4 <h2> sections in total.
+  - <h3> for section labels: Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, Forward Watch Points.
+  - <ul><li> for bullet points.
+* Keep formatting elegant, concise, and readable for an executive dashboard.

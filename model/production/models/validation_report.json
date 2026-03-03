@@ -1,0 +1,38 @@
+{
+  "date": "2026-03-02",
+  "bonds_predicted": 9,
+  "selected_default_model": {
+    "name": "CatBoost",
+    "holdout_mae": 0.07497
+  },
+  "models": {
+    "Quantile Regression": {
+      "MAE": NaN,
+      "RMSE": NaN,
+      "MAPE": NaN
+    },
+    "LightGBM Standard": {
+      "MAE": NaN,
+      "RMSE": NaN,
+      "MAPE": NaN
+    },
+    "XGBoost": {
+      "MAE": NaN,
+      "RMSE": NaN,
+      "MAPE": NaN
+    },
+    "CatBoost": {
+      "MAE": NaN,
+      "RMSE": NaN,
+      "MAPE": NaN
+    },
+    "Random Forest": {
+      "MAE": NaN,
+      "RMSE": NaN,
+      "MAPE": NaN
+    }
+  },
+  "best_model_by_series": {
+    "Quantile Regression": 9
+  }
+}
