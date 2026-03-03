@@ -34,9 +34,28 @@
         line-height: 1.5;
         color: #334155;
       }
+      .lead {
+        margin-bottom: 14px;
+      }
+      h2 {
+        margin: 14px 0 8px;
+        font-size: 16px;
+      }
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      li {
+        margin: 6px 0;
+        color: #334155;
+      }
       a {
         color: #0f172a;
         font-weight: 600;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
       }
       @media (prefers-color-scheme: dark) {
         body {
@@ -50,6 +69,9 @@
         p {
           color: #cbd5e1;
         }
+        li {
+          color: #cbd5e1;
+        }
         a {
           color: #f8fafc;
         }
@@ -59,10 +81,35 @@
   <body>
     <main class="card">
       <h1>DJPPR Data</h1>
-      <p>
-        GitHub Pages is active for this repository. For source code and project modules,
-        visit <a href="https://github.com/arifpras/djpprdata">arifpras/djpprdata</a>.
+      <p class="lead">
+        Market analytics dashboard, bond pricing models, and yield-curve analysis workspace.
       </p>
+
+      <h2>Repository</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/arifpras/djpprdata">GitHub repository</a>
+        </li>
+        <li>
+          <a href="https://github.com/arifpras/djpprdata/blob/main/README.md">Project README</a>
+        </li>
+      </ul>
+
+      <h2>Modules</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/arifpras/djpprdata/tree/main/design/apps/web">Web dashboard app</a>
+        </li>
+        <li>
+          <a href="https://github.com/arifpras/djpprdata/tree/main/design/apps/mobile">Mobile app</a>
+        </li>
+        <li>
+          <a href="https://github.com/arifpras/djpprdata/tree/main/model">Modeling notebooks & scripts</a>
+        </li>
+        <li>
+          <a href="https://github.com/arifpras/djpprdata/tree/main/data">Data assets</a>
+        </li>
+      </ul>
     </main>
   </body>
 </html>
