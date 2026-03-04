@@ -39,4 +39,4 @@ WORKDIR /app/design/apps/web
 
 EXPOSE 4000
 
-CMD ["npx", "react-router-serve", "build/server/index.js"]
+CMD ["node", "build/server/index.js"]
