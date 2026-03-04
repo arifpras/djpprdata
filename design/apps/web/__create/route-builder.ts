@@ -9,7 +9,7 @@ if (globalThis.fetch) {
   globalThis.fetch = updatedFetch;
 }
 
-const routeModules = import.meta.glob('../src/app/api/**/route.js');
+const routeModules = import.meta.glob('../src/app/api/**/route.js', { eager: true });
 
 // Helper function to transform file path to Hono route path
 function getHonoPath(routeFile: string): { name: string; pattern: string }[] {
@@ -36,7 +36,7 @@ function getHonoPath(routeFile: string): { name: string; pattern: string }[] {
 }
 
 // Import and register all routes
-async function registerRoutes() {
+function registerRoutes() {
   const routeFiles = Object.keys(routeModules)
     .slice()
     .sort((a, b) => {
@@ -48,12 +48,10 @@ async function registerRoutes() {
 
   for (const routeFile of routeFiles) {
     try {
-      const loadRoute = routeModules[routeFile];
-      if (!loadRoute) {
+      const route = routeModules[routeFile];
+      if (!route) {
         continue;
       }
-
-      const route = await loadRoute();
 
       const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
       for (const method of methods) {
@@ -97,16 +95,13 @@ async function registerRoutes() {
   }
 }
 
-// Initial route registration
-await registerRoutes();
+registerRoutes();
 
 // Hot reload routes in development
 if (import.meta.env.DEV) {
   if (import.meta.hot) {
     import.meta.hot.accept((newSelf) => {
-      registerRoutes().catch((err) => {
-        console.error('Error reloading routes:', err);
-      });
+      registerRoutes();
     });
   }
 }
