@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export function useMacroeconomicData() {
-  const [mode, setMode] = useState("single"); // 'single' or 'compare'
+  const [mode, setMode] = useState("market-update");
   const [variables, setVariables] = useState([]);
   const [selectedVariable1, setSelectedVariable1] = useState(null);
   const [selectedVariable2, setSelectedVariable2] = useState(null);
