@@ -48,7 +48,7 @@ export function Sidebar({
   const isCompactMode = viewMode === "phone" || viewMode === "tablet";
 
   const sidebarClassName = isCompactMode
-    ? `${sidebarOpen ? "w-[280px]" : "w-0"} min-h-screen flex flex-col border-r transition-all duration-300 overflow-hidden fixed z-50`
+    ? `${sidebarOpen ? "w-[280px]" : "w-0"} h-screen inset-y-0 left-0 flex flex-col border-r transition-all duration-300 overflow-hidden fixed z-50`
     : `${sidebarOpen ? "w-[280px]" : "w-0"} md:w-[280px] min-h-screen flex flex-col border-r transition-all duration-300 overflow-hidden fixed md:relative z-50`;
 
   const palette =
