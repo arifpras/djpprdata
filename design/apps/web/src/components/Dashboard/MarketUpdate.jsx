@@ -1,6 +1,8 @@
 import React from "react";
 import { Clock3, Copy, Newspaper, RefreshCw } from "lucide-react";
 
+const MARKET_UPDATE_LANGUAGE_STORAGE_KEY = "market-update-language";
+
 const MARKET_UPDATE_PLACEHOLDER = {
   en: "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh to create the latest output.",
   id: "Ringkasan Intelijen Pasar belum tersedia. Jalankan `npm run generate:market-update` atau klik Refresh untuk membuat pembaruan terbaru.",
@@ -416,7 +418,14 @@ function buildStructuredClipboardTextFromHtml(htmlContent) {
 }
 
 export function MarketUpdate({ theme = "light" }) {
-  const [language, setLanguage] = React.useState("en");
+  const [language, setLanguage] = React.useState(() => {
+    if (typeof window === "undefined") {
+      return "en";
+    }
+
+    const stored = window.localStorage.getItem(MARKET_UPDATE_LANGUAGE_STORAGE_KEY);
+    return stored === "id" ? "id" : "en";
+  });
   const [briefing, setBriefing] = React.useState(MARKET_UPDATE_PLACEHOLDER.en);
   const [generatedAt, setGeneratedAt] = React.useState(null);
   const [model, setModel] = React.useState(null);
@@ -429,6 +438,14 @@ export function MarketUpdate({ theme = "light" }) {
   const [refreshFeedback, setRefreshFeedback] = React.useState("");
 
   const i18n = LANGUAGE_COPY[language] || LANGUAGE_COPY.en;
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(MARKET_UPDATE_LANGUAGE_STORAGE_KEY, language);
+  }, [language]);
 
   const historyIds = React.useMemo(
     () => history.map((item) => item.id || item.generatedAt).filter(Boolean),
