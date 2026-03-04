@@ -9,6 +9,14 @@ function formatBotResponse(payload) {
     return "No response";
   }
 
+  if (typeof payload.text === "string" && payload.text.trim()) {
+    return payload.text.trim();
+  }
+
+  if (typeof payload.analysis === "string" && payload.analysis.trim()) {
+    return payload.analysis.trim();
+  }
+
   const intent = payload.intent || {};
   const result = payload.result || {};
   const lines = [];
@@ -27,12 +35,23 @@ function formatBotResponse(payload) {
     preview.forEach((row, index) => {
       lines.push(`${index + 1}. ${JSON.stringify(row)}`);
     });
+  } else if (Array.isArray(payload.rows) && payload.rows.length > 0) {
+    lines.push(`Rows returned: ${payload.rows.length}`);
+    const preview = payload.rows.slice(0, 3);
+    preview.forEach((row, index) => {
+      lines.push(`${index + 1}. ${JSON.stringify(row)}`);
+    });
   } else if (Object.prototype.hasOwnProperty.call(result, "value")) {
     const value = Number.isFinite(Number(result.value)) ? Number(result.value).toLocaleString("en-US") : String(result.value);
     const sample = Number.isFinite(Number(result.n)) ? ` (n=${result.n})` : "";
     lines.push(`Value: ${value}${sample}`);
+  } else if (Object.prototype.hasOwnProperty.call(payload, "value")) {
+    const value = Number.isFinite(Number(payload.value)) ? Number(payload.value).toLocaleString("en-US") : String(payload.value);
+    lines.push(`Value: ${value}`);
   } else if (Object.keys(result).length > 0) {
     lines.push(JSON.stringify(result, null, 2));
+  } else if (Object.keys(payload).length > 0) {
+    lines.push(JSON.stringify(payload, null, 2));
   }
 
   return lines.join("\n");
