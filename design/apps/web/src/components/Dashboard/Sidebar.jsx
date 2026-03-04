@@ -11,6 +11,7 @@ import {
   Star,
   Clock,
   Database,
+  Bot,
   ChevronRight,
   LogOut,
 } from "lucide-react";
@@ -200,6 +201,20 @@ export function Sidebar({
             >
               <Minus size={16} className="mr-3" strokeWidth={1.5} />
               <span className="flex-1 text-left text-[13px] font-medium">Primary Market Auction Analysis</span>
+            </button>
+            <button
+              onClick={() => {
+                setMode("perisai-bot");
+                closeSidebarOnPhone();
+              }}
+              className={`w-full flex items-center px-3 py-2.5 rounded-lg transition-colors ${
+                mode === "perisai-bot"
+                  ? "bg-[#2962FF] text-white"
+                  : inactiveButtonClass
+              }`}
+            >
+              <Bot size={16} className="mr-3" strokeWidth={1.5} />
+              <span className="text-[13px] font-medium">PerisAI Chatbot</span>
             </button>
             <button
               onClick={() => {
