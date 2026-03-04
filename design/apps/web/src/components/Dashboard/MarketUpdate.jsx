@@ -1,10 +1,12 @@
 import React from "react";
 import { Clock3, Copy, Newspaper, RefreshCw } from "lucide-react";
 
-const MARKET_UPDATE_PLACEHOLDER =
-  "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh to create the latest output.";
+const MARKET_UPDATE_PLACEHOLDER = {
+  en: "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh to create the latest output.",
+  id: "Ringkasan Intelijen Pasar belum tersedia. Jalankan `npm run generate:market-update` atau klik Refresh untuk membuat pembaruan terbaru.",
+};
 
-const RESEARCH_PROMPT = `Act as a CFA charterholder and global macro strategist operating in deep research mode.
+const RESEARCH_PROMPT_EN = `Act as a CFA charterholder and global macro strategist operating in deep research mode.
 
 Prepare a policy-grade global markets briefing covering only the most important financial and economic developments from the last 24 hours.
 
@@ -74,7 +76,142 @@ Output format requirements:
   - <ul><li> for bullet points.
 * Keep formatting elegant, concise, and readable for an executive dashboard.`;
 
-function sanitizeBriefingHtml(inputHtml) {
+const RESEARCH_PROMPT_ID = `Bertindaklah sebagai pemegang CFA charter sekaligus strategist makro global dalam mode riset mendalam.
+
+Siapkan ringkasan pasar global tingkat kebijakan yang hanya memuat perkembangan ekonomi dan keuangan paling penting dalam 24 jam terakhir.
+
+Audiens:
+Pengambil kebijakan senior.
+Gunakan Bahasa Indonesia yang lugas, profesional, dan mudah dipahami. Hindari istilah yang terlalu teknis tanpa konteks.
+
+Ruang lingkup dan aturan seleksi:
+
+* Pilih tepat 4 perkembangan pasar global yang paling berdampak dalam 24 jam terakhir.
+* Urutkan berdasarkan dampak (paling penting lebih dulu), tetapi jangan beri label ranking 1, 2, dst.
+* Dari 4 ringkasan tersebut:
+
+  * Minimal 1 harus fokus pada perkembangan ekonomi dan keuangan Indonesia.
+  * Sisanya mencakup perkembangan global utama (AS, Tiongkok, Eropa, Jepang, EM utama, komoditas, geopolitik yang memengaruhi pasar).
+
+Untuk setiap perkembangan, gunakan struktur berikut dalam poin-poin:
+
+Headline
+Judul singkat bergaya institusional.
+
+Event Synopsis
+
+* Ringkasan faktual (rilis data, keputusan kebijakan, pergerakan pasar, perkembangan geopolitik).
+* Cantumkan angka kunci bila relevan (yield, pergerakan indeks, level FX, data inflasi, dll).
+* Maksimal 2 poin.
+
+Cross-Asset Market Reaction
+
+* Ringkas pergerakan pada:
+
+  * Yield obligasi pemerintah (khususnya US 10Y dan Indonesia 10Y)
+  * Indeks saham utama
+  * Pasangan FX utama (DXY, USD/IDR, EUR/USD, USD/JPY, USD/CNH)
+  * Komoditas (Brent, WTI, Gold)
+
+US 10Y, Indonesia 10Y, DXY, dan USD/IDR wajib selalu disebut meskipun tidak banyak berubah; tulis “relatif stabil” bila perlu, tetap sertakan level terbaru.
+* Maksimal 3 poin.
+
+Policy Relevance
+
+* Jelaskan dampak terhadap:
+
+  * Prospek inflasi
+  * Ekspektasi pertumbuhan
+  * Arus modal
+  * Stabilitas nilai tukar
+  * Stabilitas pasar keuangan
+  * Ruang kebijakan fiskal/moneter
+  * Maksimal 2 poin.
+
+Forward Watch Points
+
+* 1–2 poin mengenai hal yang perlu dipantau selanjutnya oleh pembuat kebijakan.
+
+Jaga nada tulisan profesional, netral, dan relevan untuk kebijakan.
+Hindari spekulasi berlebihan di luar skenario yang masuk akal.
+Ringkas namun tetap bernas.
+
+Ringkasan ini untuk kebutuhan asesmen strategis internal, bukan komunikasi publik.
+
+Format output:
+* Kembalikan HTML valid saja (tanpa Markdown, tanpa code fence).
+* Gunakan struktur:
+  - <h2> untuk setiap headline perkembangan, total tepat 4 bagian <h2>.
+  - <h3> untuk label bagian: Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, Forward Watch Points.
+  - <ul><li> untuk poin-poin.
+* Format harus rapi, ringkas, dan nyaman dibaca pada dashboard eksekutif.`;
+
+const LANGUAGE_COPY = {
+  en: {
+    marketDevelopment: "Market Development",
+    title: "Market Intelligence Briefing",
+    subtitle: "Institutional global markets briefing generated from Deep Research prompt.",
+    copied: "Copied",
+    copyFailed: "Copy failed",
+    refreshing: "Refreshing",
+    refresh: "Refresh",
+    refreshRunning: "Refresh is already running.",
+    refreshCompleted: "Refresh completed.",
+    refreshFailed: "Refresh failed.",
+    refreshButtonTitle: "Refresh briefing now",
+    copyButtonTitle: "Copy briefing",
+    scheduleLabel: "Refresh schedule: 05:00 and 12:30. Next refresh target:",
+    latestGenerated: "Latest generated",
+    model: "Model",
+    lastChecked: "Last checked",
+    archiveLabel: "Briefing archive (latest 30 generated)",
+    structureCheck: "Structure check:",
+    passed: "Passed",
+    needsReview: "Needs review",
+    version: "Version",
+    latestBriefing: "Latest briefing",
+    unknownTime: "Unknown time",
+    newer: "Newer",
+    older: "Older",
+    loading: "Loading latest briefing...",
+    deepPrompt: "Deep Research Prompt Reference",
+    copyFallback: "Copy",
+    language: "Language",
+  },
+  id: {
+    marketDevelopment: "Perkembangan Pasar",
+    title: "Ringkasan Intelijen Pasar",
+    subtitle: "Ringkasan pasar global berstandar institusi yang dihasilkan dari prompt Deep Research.",
+    copied: "Tersalin",
+    copyFailed: "Gagal menyalin",
+    refreshing: "Memuat ulang",
+    refresh: "Refresh",
+    refreshRunning: "Proses refresh sedang berjalan.",
+    refreshCompleted: "Refresh selesai.",
+    refreshFailed: "Refresh gagal.",
+    refreshButtonTitle: "Refresh ringkasan sekarang",
+    copyButtonTitle: "Salin ringkasan",
+    scheduleLabel: "Jadwal refresh: 05:00 dan 12:30. Target refresh berikutnya:",
+    latestGenerated: "Terakhir dibuat",
+    model: "Model",
+    lastChecked: "Terakhir dicek",
+    archiveLabel: "Arsip ringkasan (30 versi terbaru)",
+    structureCheck: "Pemeriksaan struktur:",
+    passed: "Lolos",
+    needsReview: "Perlu ditinjau",
+    version: "Versi",
+    latestBriefing: "Ringkasan terbaru",
+    unknownTime: "Waktu tidak diketahui",
+    newer: "Lebih baru",
+    older: "Lebih lama",
+    loading: "Memuat ringkasan terbaru...",
+    deepPrompt: "Referensi Prompt Deep Research",
+    copyFallback: "Salin",
+    language: "Bahasa",
+  },
+};
+
+function sanitizeBriefingHtml(inputHtml, language = "en") {
   if (typeof window === "undefined") {
     return inputHtml;
   }
@@ -131,7 +268,7 @@ function sanitizeBriefingHtml(inputHtml) {
 
     const kicker = documentNode.createElement("div");
     kicker.setAttribute("data-briefing-kicker", "true");
-    kicker.textContent = "Market Development";
+    kicker.textContent = LANGUAGE_COPY[language]?.marketDevelopment || LANGUAGE_COPY.en.marketDevelopment;
     section.insertBefore(kicker, heading);
   });
 
@@ -279,7 +416,8 @@ function buildStructuredClipboardTextFromHtml(htmlContent) {
 }
 
 export function MarketUpdate({ theme = "light" }) {
-  const [briefing, setBriefing] = React.useState(MARKET_UPDATE_PLACEHOLDER);
+  const [language, setLanguage] = React.useState("en");
+  const [briefing, setBriefing] = React.useState(MARKET_UPDATE_PLACEHOLDER.en);
   const [generatedAt, setGeneratedAt] = React.useState(null);
   const [model, setModel] = React.useState(null);
   const [status, setStatus] = React.useState("loading");
@@ -289,6 +427,8 @@ export function MarketUpdate({ theme = "light" }) {
   const [copyFeedback, setCopyFeedback] = React.useState("");
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [refreshFeedback, setRefreshFeedback] = React.useState("");
+
+  const i18n = LANGUAGE_COPY[language] || LANGUAGE_COPY.en;
 
   const historyIds = React.useMemo(
     () => history.map((item) => item.id || item.generatedAt).filter(Boolean),
@@ -323,8 +463,8 @@ export function MarketUpdate({ theme = "light" }) {
       return "";
     }
 
-    return sanitizeBriefingHtml(briefing);
-  }, [briefing, looksLikeHtml]);
+    return sanitizeBriefingHtml(briefing, language);
+  }, [briefing, looksLikeHtml, language]);
 
   const structureValidation = React.useMemo(() => {
     if (!looksLikeHtml) {
@@ -358,7 +498,7 @@ export function MarketUpdate({ theme = "light" }) {
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(textToCopy);
-        setCopyFeedback("Copied");
+        setCopyFeedback(i18n.copied);
         window.setTimeout(() => setCopyFeedback(""), 1500);
         return;
       }
@@ -372,18 +512,21 @@ export function MarketUpdate({ theme = "light" }) {
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      setCopyFeedback("Copied");
+      setCopyFeedback(i18n.copied);
       window.setTimeout(() => setCopyFeedback(""), 1500);
     } catch {
-      setCopyFeedback("Copy failed");
+      setCopyFeedback(i18n.copyFailed);
       window.setTimeout(() => setCopyFeedback(""), 1500);
     }
-  }, [briefing, looksLikeHtml, renderedBriefingHtml]);
+  }, [briefing, i18n.copied, i18n.copyFailed, looksLikeHtml, renderedBriefingHtml]);
 
-  const fetchBriefing = React.useCallback(async (requestedId = "latest") => {
+  const fetchBriefing = React.useCallback(async (requestedId = "latest", requestedLanguage = language) => {
     try {
       const idQuery = requestedId && requestedId !== "latest" ? `&id=${encodeURIComponent(requestedId)}` : "";
-      const response = await fetch(`/api/market-update?t=${Date.now()}${idQuery}`, { cache: "no-store" });
+      const response = await fetch(
+        `/api/market-update?t=${Date.now()}${idQuery}&lang=${encodeURIComponent(requestedLanguage)}`,
+        { cache: "no-store" },
+      );
       if (!response.ok) {
         throw new Error("Request failed");
       }
@@ -391,7 +534,7 @@ export function MarketUpdate({ theme = "light" }) {
       const payload = await response.json();
 
       setStatus(payload.status || "ok");
-      setBriefing(payload.content || MARKET_UPDATE_PLACEHOLDER);
+      setBriefing(payload.content || MARKET_UPDATE_PLACEHOLDER[requestedLanguage] || MARKET_UPDATE_PLACEHOLDER.en);
       setGeneratedAt(payload.generatedAt || null);
       setModel(payload.model || null);
       setHistory(Array.isArray(payload.history) ? payload.history : []);
@@ -403,13 +546,17 @@ export function MarketUpdate({ theme = "light" }) {
       setLastCheckedAt(new Date().toISOString());
     } catch (error) {
       setStatus("error");
-      setBriefing("Failed to load latest market briefing.");
+      setBriefing(
+        requestedLanguage === "id"
+          ? "Gagal memuat ringkasan pasar terbaru."
+          : "Failed to load latest market briefing.",
+      );
       setGeneratedAt(null);
       setModel(null);
       setHistory([]);
       setLastCheckedAt(new Date().toISOString());
     }
-  }, []);
+  }, [language]);
 
   const triggerManualRefresh = React.useCallback(async () => {
     if (isRefreshing) {
@@ -420,7 +567,7 @@ export function MarketUpdate({ theme = "light" }) {
     setRefreshFeedback("");
 
     try {
-      const response = await fetch("/api/market-update", {
+      const response = await fetch(`/api/market-update?lang=${encodeURIComponent(language)}`, {
         method: "POST",
         headers: {
           "Cache-Control": "no-store",
@@ -430,7 +577,7 @@ export function MarketUpdate({ theme = "light" }) {
       const payload = await response.json();
 
       if (response.status === 409) {
-        setRefreshFeedback(payload.message || "Refresh is already running.");
+        setRefreshFeedback(payload.message || i18n.refreshRunning);
         return;
       }
 
@@ -439,15 +586,15 @@ export function MarketUpdate({ theme = "light" }) {
       }
 
       setSelectedBriefingId("latest");
-      await fetchBriefing("latest");
-      setRefreshFeedback("Refresh completed.");
+      await fetchBriefing("latest", language);
+      setRefreshFeedback(i18n.refreshCompleted);
     } catch {
-      setRefreshFeedback("Refresh failed.");
+      setRefreshFeedback(i18n.refreshFailed);
     } finally {
       setIsRefreshing(false);
       window.setTimeout(() => setRefreshFeedback(""), 2500);
     }
-  }, [fetchBriefing, isRefreshing]);
+  }, [fetchBriefing, i18n.refreshCompleted, i18n.refreshFailed, i18n.refreshRunning, isRefreshing, language]);
 
   React.useEffect(() => {
     let active = true;
@@ -457,7 +604,7 @@ export function MarketUpdate({ theme = "light" }) {
         return;
       }
 
-      await fetchBriefing(selectedBriefingId);
+      await fetchBriefing(selectedBriefingId, language);
     };
 
     runFetch();
@@ -482,7 +629,7 @@ export function MarketUpdate({ theme = "light" }) {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("focus", handleFocus);
     };
-  }, [fetchBriefing, selectedBriefingId]);
+  }, [fetchBriefing, language, selectedBriefingId]);
 
   const now = new Date();
   const nextUpdate = new Date(now);
@@ -506,7 +653,7 @@ export function MarketUpdate({ theme = "light" }) {
     nextUpdate.setHours(scheduleMinutes[0].hour, scheduleMinutes[0].minute, 0, 0);
   }
 
-  const nextUpdateLabel = nextUpdate.toLocaleString("en-US", {
+  const nextUpdateLabel = nextUpdate.toLocaleString(language === "id" ? "id-ID" : "en-US", {
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -525,13 +672,31 @@ export function MarketUpdate({ theme = "light" }) {
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
           <h3 className="text-[16px] font-semibold" style={{ color: palette.title }}>
-            Market Intelligence Briefing
+            {i18n.title}
           </h3>
           <p className="text-[12px] mt-1" style={{ color: palette.subText }}>
-            Institutional global markets briefing generated from Deep Research prompt.
+            {i18n.subtitle}
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <label className="text-[11px]" style={{ color: palette.subText }} htmlFor="market-language-select">
+            {i18n.language}
+          </label>
+          <select
+            id="market-language-select"
+            className="h-[26px] rounded-md border px-2 text-[11px]"
+            style={{ borderColor: palette.border, color: palette.text, backgroundColor: palette.mutedBg }}
+            value={language}
+            onChange={(event) => {
+              const nextLang = event.target.value === "id" ? "id" : "en";
+              setLanguage(nextLang);
+              setSelectedBriefingId("latest");
+              setRefreshFeedback("");
+            }}
+          >
+            <option value="en">English</option>
+            <option value="id">Indonesia</option>
+          </select>
           {refreshFeedback ? (
             <span className="text-[10px]" style={{ color: palette.subText }}>
               {refreshFeedback}
@@ -547,11 +712,11 @@ export function MarketUpdate({ theme = "light" }) {
             }}
             onClick={triggerManualRefresh}
             disabled={isRefreshing}
-            title="Refresh briefing now"
-            aria-label="Refresh briefing now"
+            title={i18n.refreshButtonTitle}
+            aria-label={i18n.refreshButtonTitle}
           >
             <RefreshCw size={12} className={isRefreshing ? "animate-spin" : ""} />
-            {isRefreshing ? "Refreshing" : "Refresh"}
+            {isRefreshing ? i18n.refreshing : i18n.refresh}
           </button>
           {copyFeedback ? (
             <span className="text-[10px]" style={{ color: palette.subText }}>
@@ -567,8 +732,8 @@ export function MarketUpdate({ theme = "light" }) {
               backgroundColor: palette.mutedBg,
             }}
             onClick={copyBriefingToClipboard}
-            title={copyFeedback || "Copy briefing"}
-            aria-label="Copy briefing"
+            title={copyFeedback || i18n.copyButtonTitle}
+            aria-label={i18n.copyButtonTitle}
           >
             <Copy size={12} />
           </button>
@@ -582,10 +747,14 @@ export function MarketUpdate({ theme = "light" }) {
       >
         <Clock3 size={14} />
         <span className="text-[12px]">
-          Refresh schedule: 05:00 and 12:30. Next refresh target: {nextUpdateLabel}
-          {generatedAt ? ` • Latest generated: ${new Date(generatedAt).toLocaleString("en-US")}` : ""}
-          {model ? ` • Model: ${model}` : ""}
-          {lastCheckedAt ? ` • Last checked: ${new Date(lastCheckedAt).toLocaleString("en-US")}` : ""}
+          {i18n.scheduleLabel} {nextUpdateLabel}
+          {generatedAt
+            ? ` • ${i18n.latestGenerated}: ${new Date(generatedAt).toLocaleString(language === "id" ? "id-ID" : "en-US")}`
+            : ""}
+          {model ? ` • ${i18n.model}: ${model}` : ""}
+          {lastCheckedAt
+            ? ` • ${i18n.lastChecked}: ${new Date(lastCheckedAt).toLocaleString(language === "id" ? "id-ID" : "en-US")}`
+            : ""}
         </span>
       </div>
 
@@ -594,7 +763,7 @@ export function MarketUpdate({ theme = "light" }) {
         style={{ borderColor: palette.border, backgroundColor: palette.cardBg }}
       >
         <div className="flex items-center gap-2 text-[12px]" style={{ color: palette.subText }}>
-          <span>Briefing archive (latest 30 generated)</span>
+          <span>{i18n.archiveLabel}</span>
           <span
             className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium"
             style={{
@@ -615,12 +784,12 @@ export function MarketUpdate({ theme = "light" }) {
             }}
             title={structureValidation.reason}
           >
-            Structure check: {structureValidation.passed ? "Passed" : "Needs review"}
+            {i18n.structureCheck} {structureValidation.passed ? i18n.passed : i18n.needsReview}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <label className="text-[12px]" style={{ color: palette.subText }} htmlFor="briefing-version-select">
-            Version
+            {i18n.version}
           </label>
           <select
             id="briefing-version-select"
@@ -634,10 +803,10 @@ export function MarketUpdate({ theme = "light" }) {
             onChange={(event) => {
               const nextValue = event.target.value;
               setSelectedBriefingId(nextValue);
-              fetchBriefing(nextValue);
+              fetchBriefing(nextValue, language);
             }}
           >
-            <option value="latest">Latest briefing</option>
+            <option value="latest">{i18n.latestBriefing}</option>
             {history.map((item) => {
               const optionId = item.id || item.generatedAt;
               if (!optionId) {
@@ -645,8 +814,8 @@ export function MarketUpdate({ theme = "light" }) {
               }
 
               const dateLabel = item.generatedAt
-                ? new Date(item.generatedAt).toLocaleString("en-US")
-                : "Unknown time";
+                ? new Date(item.generatedAt).toLocaleString(language === "id" ? "id-ID" : "en-US")
+                : i18n.unknownTime;
               const modelLabel = item.model ? ` • ${item.model}` : "";
 
               return (
@@ -673,10 +842,10 @@ export function MarketUpdate({ theme = "light" }) {
               }
 
               setSelectedBriefingId(newerId);
-              fetchBriefing(newerId);
+              fetchBriefing(newerId, language);
             }}
           >
-            Newer
+            {i18n.newer}
           </button>
 
           <button
@@ -695,10 +864,10 @@ export function MarketUpdate({ theme = "light" }) {
               }
 
               setSelectedBriefingId(olderId);
-              fetchBriefing(olderId);
+              fetchBriefing(olderId, language);
             }}
           >
-            Older
+            {i18n.older}
           </button>
         </div>
       </div>
@@ -709,7 +878,7 @@ export function MarketUpdate({ theme = "light" }) {
       >
         {status === "loading" && (
           <div className="text-[12px] mb-3" style={{ color: palette.subText }}>
-            Loading latest briefing...
+            {i18n.loading}
           </div>
         )}
         {looksLikeHtml ? (
@@ -735,13 +904,13 @@ export function MarketUpdate({ theme = "light" }) {
         style={{ borderColor: palette.border, backgroundColor: palette.cardBg }}
       >
         <summary className="text-[12px] font-medium cursor-pointer" style={{ color: palette.title }}>
-          Deep Research Prompt Reference
+          {i18n.deepPrompt}
         </summary>
         <pre
           className="mt-3 text-[11px] whitespace-pre-wrap leading-relaxed"
           style={{ color: palette.subText, fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}
         >
-          {RESEARCH_PROMPT}
+          {language === "id" ? RESEARCH_PROMPT_ID : RESEARCH_PROMPT_EN}
         </pre>
       </details>
     </div>

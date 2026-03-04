@@ -45,7 +45,28 @@ const MODEL = process.env.OPENAI_MODEL || "gpt-5.2";
 const MAX_OUTPUT_TOKENS = Number(process.env.OPENAI_MAX_OUTPUT_TOKENS || 4000);
 const MAX_HISTORY_ITEMS = 30;
 
-const PROMPT = `Act as a CFA charterholder and global macro strategist operating in deep research mode.
+function normalizeLanguage(value) {
+  const raw = String(value || "").toLowerCase();
+  return raw === "id" || raw === "indonesia" ? "id" : "en";
+}
+
+function getLanguageArg() {
+  const langArgIndex = process.argv.findIndex((item) => item === "--lang");
+  if (langArgIndex >= 0) {
+    return normalizeLanguage(process.argv[langArgIndex + 1]);
+  }
+
+  const equalsArg = process.argv.find((item) => item.startsWith("--lang="));
+  if (equalsArg) {
+    return normalizeLanguage(equalsArg.split("=")[1]);
+  }
+
+  return normalizeLanguage(process.env.MARKET_UPDATE_LANG || "en");
+}
+
+const LANGUAGE = getLanguageArg();
+
+const PROMPT_EN = `Act as a CFA charterholder and global macro strategist operating in deep research mode.
 
 Prepare a policy-grade global markets briefing covering only the most important financial and economic developments from the last 24 hours.
 
@@ -114,6 +135,76 @@ Output format requirements:
   - <h3> for section labels: Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, Forward Watch Points.
   - <ul><li> for bullet points.
 * Keep formatting elegant, concise, and readable for an executive dashboard.`;
+
+const PROMPT_ID = `Bertindaklah sebagai pemegang CFA charter sekaligus strategist makro global dalam mode riset mendalam.
+
+Siapkan ringkasan pasar global tingkat kebijakan yang hanya memuat perkembangan ekonomi dan keuangan paling penting dalam 24 jam terakhir.
+
+Audiens:
+Pengambil kebijakan senior.
+Gunakan Bahasa Indonesia yang lugas, profesional, dan mudah dipahami. Hindari istilah yang terlalu teknis tanpa konteks.
+
+Ruang lingkup dan aturan seleksi:
+
+* Pilih tepat 4 perkembangan pasar global yang paling berdampak dalam 24 jam terakhir.
+* Urutkan berdasarkan dampak (paling penting lebih dulu), tetapi jangan beri label ranking 1, 2, dst.
+* Dari 4 ringkasan tersebut:
+
+  * Minimal 1 harus fokus pada perkembangan ekonomi dan keuangan Indonesia.
+  * Sisanya mencakup perkembangan global utama (AS, Tiongkok, Eropa, Jepang, EM utama, komoditas, geopolitik yang memengaruhi pasar).
+
+Untuk setiap perkembangan, gunakan struktur berikut dalam poin-poin:
+
+Headline
+Judul singkat bergaya institusional.
+
+Event Synopsis
+
+* Ringkasan faktual (rilis data, keputusan kebijakan, pergerakan pasar, perkembangan geopolitik).
+* Cantumkan angka kunci bila relevan (yield, pergerakan indeks, level FX, data inflasi, dll).
+* Maksimal 2 poin.
+
+Cross-Asset Market Reaction
+
+* Ringkas pergerakan pada:
+
+  * Yield obligasi pemerintah (khususnya US 10Y dan Indonesia 10Y)
+  * Indeks saham utama
+  * Pasangan FX utama (DXY, USD/IDR, EUR/USD, USD/JPY, USD/CNH)
+  * Komoditas (Brent, WTI, Gold)
+
+US 10Y, Indonesia 10Y, DXY, dan USD/IDR wajib selalu disebut meskipun tidak banyak berubah; tulis “relatif stabil” bila perlu, tetap sertakan level terbaru.
+* Maksimal 3 poin.
+
+Policy Relevance
+
+* Jelaskan dampak terhadap:
+
+  * Prospek inflasi
+  * Ekspektasi pertumbuhan
+  * Arus modal
+  * Stabilitas nilai tukar
+  * Stabilitas pasar keuangan
+  * Ruang kebijakan fiskal/moneter
+  * Maksimal 2 poin.
+
+Forward Watch Points
+
+* 1–2 poin mengenai hal yang perlu dipantau selanjutnya oleh pembuat kebijakan.
+
+Jaga nada tulisan profesional, netral, dan relevan untuk kebijakan.
+Hindari spekulasi berlebihan di luar skenario yang masuk akal.
+Ringkas namun tetap bernas.
+
+Ringkasan ini untuk kebutuhan asesmen strategis internal, bukan komunikasi publik.
+
+Format output:
+* Kembalikan HTML valid saja (tanpa Markdown, tanpa code fence).
+* Gunakan struktur:
+  - <h2> untuk setiap headline perkembangan, total tepat 4 bagian <h2>.
+  - <h3> untuk label bagian: Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, Forward Watch Points.
+  - <ul><li> untuk poin-poin.
+* Format harus rapi, ringkas, dan nyaman dibaca pada dashboard eksekutif.`;
 
 function stripHyperlinksFromHtml(input) {
   if (!input) {
@@ -197,8 +288,12 @@ async function main() {
 
   const client = new OpenAI({ apiKey });
 
-  const baseSystemPrompt =
-    "You write institutional-grade macro briefings. Use web_search to ensure all data reflects the last 24 hours. Return valid HTML only. Produce exactly 4 development sections and ensure at least one section is Indonesia-focused. Use section labels Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, and Forward Watch Points. Do not include hyperlinks in citations; cite sources as plain text labels like (Source: Reuters) or (Source: BI). Use at most one source citation per bullet point.";
+  const isIndonesian = LANGUAGE === "id";
+  const prompt = isIndonesian ? PROMPT_ID : PROMPT_EN;
+
+  const baseSystemPrompt = isIndonesian
+    ? "Anda menulis ringkasan makro kelas institusi dalam Bahasa Indonesia. Gunakan web_search agar data mencerminkan 24 jam terakhir. Kembalikan HTML valid saja. Hasil harus berisi tepat 4 bagian perkembangan dan minimal satu bagian fokus Indonesia. Gunakan label bagian Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, dan Forward Watch Points. Jangan gunakan hyperlink; sitasi cukup teks polos seperti (Source: Reuters) atau (Source: BI). Maksimal satu sitasi sumber per bullet point."
+    : "You write institutional-grade macro briefings. Use web_search to ensure all data reflects the last 24 hours. Return valid HTML only. Produce exactly 4 development sections and ensure at least one section is Indonesia-focused. Use section labels Event Synopsis, Cross-Asset Market Reaction, Policy Relevance, and Forward Watch Points. Do not include hyperlinks in citations; cite sources as plain text labels like (Source: Reuters) or (Source: BI). Use at most one source citation per bullet point.";
 
   const generateAttempt = async (extraInstruction = "") => {
     console.error(`[DEBUG] Requesting ${MODEL} with web_search tool...`);
@@ -214,7 +309,7 @@ async function main() {
         },
         {
           role: "user",
-          content: `${PROMPT}${extraInstruction ? `\n\n${extraInstruction}` : ""}`,
+          content: `${prompt}${extraInstruction ? `\n\n${extraInstruction}` : ""}`,
         },
       ],
     });
@@ -283,11 +378,12 @@ async function main() {
     id: new Date().toISOString(),
     generatedAt: new Date().toISOString(),
     model: MODEL,
+    language: LANGUAGE,
     content: text,
   };
 
-  const outputPath = path.join(projectRoot, "data", "market-update", "latest.json");
-  const historyPath = path.join(projectRoot, "data", "market-update", "history.json");
+  const outputPath = path.join(projectRoot, "data", "market-update", `latest-${LANGUAGE}.json`);
+  const historyPath = path.join(projectRoot, "data", "market-update", `history-${LANGUAGE}.json`);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), "utf8");
 
