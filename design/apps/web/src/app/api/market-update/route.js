@@ -4,24 +4,15 @@ import { spawn } from "node:child_process";
 
 let generationPromise = null;
 
-function normalizeLanguage(value) {
-  const raw = String(value || "").toLowerCase();
-  return raw === "id" || raw === "indonesia" ? "id" : "en";
+function getMarketUpdateFilePath() {
+  return path.join(process.cwd(), "data", "market-update", "latest.json");
 }
 
-function getMarketUpdateFilePath(language) {
-  const lang = normalizeLanguage(language);
-  return path.join(process.cwd(), "data", "market-update", `latest-${lang}.json`);
+function getMarketUpdateHistoryPath() {
+  return path.join(process.cwd(), "data", "market-update", "history.json");
 }
 
-function getMarketUpdateHistoryPath(language) {
-  const lang = normalizeLanguage(language);
-  return path.join(process.cwd(), "data", "market-update", `history-${lang}.json`);
-}
-
-function runMarketUpdateGeneration(language) {
-  const lang = normalizeLanguage(language);
-
+function runMarketUpdateGeneration() {
   return new Promise((resolve, reject) => {
     const scriptPath = path.join(process.cwd(), "scripts", "generate-market-update.mjs");
 
@@ -30,7 +21,7 @@ function runMarketUpdateGeneration(language) {
       return;
     }
 
-    const child = spawn(process.execPath, [scriptPath, "--lang", lang], {
+    const child = spawn(process.execPath, [scriptPath], {
       cwd: process.cwd(),
       env: process.env,
       stdio: ["ignore", "pipe", "pipe"],
@@ -60,29 +51,14 @@ function runMarketUpdateGeneration(language) {
 
 export async function GET(request) {
   try {
+    const filePath = getMarketUpdateFilePath();
+    const historyPath = getMarketUpdateHistoryPath();
     const requestUrl = new URL(request.url);
-    const language = normalizeLanguage(requestUrl.searchParams.get("lang"));
-    const filePath = getMarketUpdateFilePath(language);
-    const historyPath = getMarketUpdateHistoryPath(language);
     const selectedId = requestUrl.searchParams.get("id");
 
-    const legacyLatestPath = path.join(process.cwd(), "data", "market-update", "latest.json");
-    const legacyHistoryPath = path.join(process.cwd(), "data", "market-update", "history.json");
-    const shouldFallbackToLegacy = language === "en";
-    const resolvedFilePath = fs.existsSync(filePath)
-      ? filePath
-      : shouldFallbackToLegacy
-        ? legacyLatestPath
-        : filePath;
-    const resolvedHistoryPath = fs.existsSync(historyPath)
-      ? historyPath
-      : shouldFallbackToLegacy
-        ? legacyHistoryPath
-        : historyPath;
-
     let history = [];
-    if (fs.existsSync(resolvedHistoryPath)) {
-      const rawHistory = fs.readFileSync(resolvedHistoryPath, "utf8");
+    if (fs.existsSync(historyPath)) {
+      const rawHistory = fs.readFileSync(historyPath, "utf8");
       const parsedHistory = JSON.parse(rawHistory);
       if (Array.isArray(parsedHistory)) {
         history = parsedHistory;
@@ -95,7 +71,7 @@ export async function GET(request) {
       model: entry.model || null,
     }));
 
-    if (!fs.existsSync(resolvedFilePath)) {
+    if (!fs.existsSync(filePath)) {
       const selectedEntry = selectedId
         ? history.find((entry) => (entry.id || entry.generatedAt) === selectedId)
         : history[0] || null;
@@ -106,12 +82,9 @@ export async function GET(request) {
           selectedId: selectedEntry ? selectedEntry.id || selectedEntry.generatedAt : null,
           generatedAt: selectedEntry ? selectedEntry.generatedAt || null : null,
           model: selectedEntry ? selectedEntry.model || null : null,
-          language,
           content: selectedEntry
             ? selectedEntry.content || ""
-            : language === "id"
-              ? "Ringkasan Intelijen Pasar belum dibuat. Jalankan `npm run generate:market-update` atau klik Refresh untuk membuat pembaruan terbaru."
-              : "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh to create the latest output.",
+            : "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh now to create the latest output.",
           history: historyMeta,
         },
         {
@@ -122,7 +95,7 @@ export async function GET(request) {
       );
     }
 
-    const raw = fs.readFileSync(resolvedFilePath, "utf8");
+    const raw = fs.readFileSync(filePath, "utf8");
     const parsed = JSON.parse(raw);
 
     const fallbackLatestId = parsed.id || parsed.generatedAt || null;
@@ -138,7 +111,6 @@ export async function GET(request) {
         selectedId: responseEntry.id || responseEntry.generatedAt || fallbackLatestId,
         generatedAt: responseEntry.generatedAt || null,
         model: responseEntry.model || null,
-        language,
         content: responseEntry.content || "",
         history: historyMeta,
       },
@@ -165,18 +137,12 @@ export async function GET(request) {
   }
 }
 
-export async function POST(request) {
-  const requestUrl = new URL(request.url);
-  const language = normalizeLanguage(requestUrl.searchParams.get("lang"));
-
+export async function POST() {
   if (generationPromise) {
     return Response.json(
       {
         status: "running",
-        message:
-          language === "id"
-            ? "Pembaruan market update sedang berjalan."
-            : "Market update generation is already in progress.",
+        message: "Market update generation is already in progress.",
       },
       {
         status: 409,
@@ -187,17 +153,14 @@ export async function POST(request) {
     );
   }
 
-  generationPromise = runMarketUpdateGeneration(language);
+  generationPromise = runMarketUpdateGeneration();
 
   try {
     await generationPromise;
     return Response.json(
       {
         status: "ok",
-        message:
-          language === "id"
-            ? "Market update berhasil dibuat."
-            : "Market update generated successfully.",
+        message: "Market update generated successfully.",
       },
       {
         headers: {
@@ -210,10 +173,7 @@ export async function POST(request) {
     return Response.json(
       {
         status: "error",
-        error:
-          language === "id"
-            ? "Gagal membuat market update."
-            : "Failed to generate market update.",
+        error: "Failed to generate market update.",
       },
       {
         status: 500,
