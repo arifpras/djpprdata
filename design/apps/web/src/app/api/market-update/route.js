@@ -68,8 +68,17 @@ export async function GET(request) {
 
     const legacyLatestPath = path.join(process.cwd(), "data", "market-update", "latest.json");
     const legacyHistoryPath = path.join(process.cwd(), "data", "market-update", "history.json");
-    const resolvedFilePath = fs.existsSync(filePath) ? filePath : legacyLatestPath;
-    const resolvedHistoryPath = fs.existsSync(historyPath) ? historyPath : legacyHistoryPath;
+    const shouldFallbackToLegacy = language === "en";
+    const resolvedFilePath = fs.existsSync(filePath)
+      ? filePath
+      : shouldFallbackToLegacy
+        ? legacyLatestPath
+        : filePath;
+    const resolvedHistoryPath = fs.existsSync(historyPath)
+      ? historyPath
+      : shouldFallbackToLegacy
+        ? legacyHistoryPath
+        : historyPath;
 
     let history = [];
     if (fs.existsSync(resolvedHistoryPath)) {

@@ -213,7 +213,7 @@ const LANGUAGE_COPY = {
   },
 };
 
-function sanitizeBriefingHtml(inputHtml, language = "en") {
+function sanitizeBriefingHtml(inputHtml) {
   if (typeof window === "undefined") {
     return inputHtml;
   }
@@ -270,7 +270,7 @@ function sanitizeBriefingHtml(inputHtml, language = "en") {
 
     const kicker = documentNode.createElement("div");
     kicker.setAttribute("data-briefing-kicker", "true");
-    kicker.textContent = LANGUAGE_COPY[language]?.marketDevelopment || LANGUAGE_COPY.en.marketDevelopment;
+    kicker.textContent = LANGUAGE_COPY.en.marketDevelopment;
     section.insertBefore(kicker, heading);
   });
 
@@ -437,7 +437,7 @@ export function MarketUpdate({ theme = "light" }) {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [refreshFeedback, setRefreshFeedback] = React.useState("");
 
-  const i18n = LANGUAGE_COPY[language] || LANGUAGE_COPY.en;
+  const i18n = LANGUAGE_COPY.en;
 
   React.useEffect(() => {
     if (typeof window === "undefined") {
@@ -480,8 +480,8 @@ export function MarketUpdate({ theme = "light" }) {
       return "";
     }
 
-    return sanitizeBriefingHtml(briefing, language);
-  }, [briefing, looksLikeHtml, language]);
+    return sanitizeBriefingHtml(briefing);
+  }, [briefing, looksLikeHtml]);
 
   const structureValidation = React.useMemo(() => {
     if (!looksLikeHtml) {
@@ -670,7 +670,7 @@ export function MarketUpdate({ theme = "light" }) {
     nextUpdate.setHours(scheduleMinutes[0].hour, scheduleMinutes[0].minute, 0, 0);
   }
 
-  const nextUpdateLabel = nextUpdate.toLocaleString(language === "id" ? "id-ID" : "en-US", {
+  const nextUpdateLabel = nextUpdate.toLocaleString("en-US", {
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -765,13 +765,9 @@ export function MarketUpdate({ theme = "light" }) {
         <Clock3 size={14} />
         <span className="text-[12px]">
           {i18n.scheduleLabel} {nextUpdateLabel}
-          {generatedAt
-            ? ` • ${i18n.latestGenerated}: ${new Date(generatedAt).toLocaleString(language === "id" ? "id-ID" : "en-US")}`
-            : ""}
+          {generatedAt ? ` • ${i18n.latestGenerated}: ${new Date(generatedAt).toLocaleString("en-US")}` : ""}
           {model ? ` • ${i18n.model}: ${model}` : ""}
-          {lastCheckedAt
-            ? ` • ${i18n.lastChecked}: ${new Date(lastCheckedAt).toLocaleString(language === "id" ? "id-ID" : "en-US")}`
-            : ""}
+          {lastCheckedAt ? ` • ${i18n.lastChecked}: ${new Date(lastCheckedAt).toLocaleString("en-US")}` : ""}
         </span>
       </div>
 
@@ -831,7 +827,7 @@ export function MarketUpdate({ theme = "light" }) {
               }
 
               const dateLabel = item.generatedAt
-                ? new Date(item.generatedAt).toLocaleString(language === "id" ? "id-ID" : "en-US")
+                ? new Date(item.generatedAt).toLocaleString("en-US")
                 : i18n.unknownTime;
               const modelLabel = item.model ? ` • ${item.model}` : "";
 
