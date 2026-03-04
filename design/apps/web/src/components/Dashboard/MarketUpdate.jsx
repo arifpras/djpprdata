@@ -2,7 +2,7 @@ import React from "react";
 import { Clock3, Copy, Newspaper, RefreshCw } from "lucide-react";
 
 const MARKET_UPDATE_PLACEHOLDER =
-  "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh now to create the latest output.";
+  "Market Intelligence Briefing is not generated yet. Run `npm run generate:market-update` or use Refresh to create the latest output.";
 
 const RESEARCH_PROMPT = `Act as a CFA charterholder and global macro strategist operating in deep research mode.
 
@@ -551,7 +551,7 @@ export function MarketUpdate({ theme = "light" }) {
             aria-label="Refresh briefing now"
           >
             <RefreshCw size={12} className={isRefreshing ? "animate-spin" : ""} />
-            {isRefreshing ? "Refreshing" : "Refresh now"}
+            {isRefreshing ? "Refreshing" : "Refresh"}
           </button>
           {copyFeedback ? (
             <span className="text-[10px]" style={{ color: palette.subText }}>
