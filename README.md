@@ -1,5 +1,9 @@
 # Dashboard Workspace
 
+## Live Dashboard
+
+- Production URL: https://perisai-dashboard.onrender.com/
+
 Top-level structure:
 
 - `data/` — source datasets and extracted market data files.
@@ -65,6 +69,10 @@ This repository includes `render.yaml` for Render Blueprint deployment.
 3. Render will detect `render.yaml` and create service `perisai-dashboard`.
 4. Set `OPENAI_API_KEY` in Render Environment Variables (if market update AI feature is used).
 5. Deploy and open the generated Render URL.
+
+Current live deployment:
+
+- https://perisai-dashboard.onrender.com/
 
 Notes:
 
