@@ -7,7 +7,6 @@ import { BondPricePrediction } from "@/components/Dashboard/BondPricePrediction"
 import { Header } from "@/components/Dashboard/Header";
 import { IndicatorSelector } from "@/components/Dashboard/IndicatorSelector";
 import { MarketUpdate } from "@/components/Dashboard/MarketUpdate";
-import { PerisAIBot } from "@/components/Dashboard/PerisAIBot";
 import { PrimaryAuctionAnalysis } from "@/components/Dashboard/PrimaryAuctionAnalysis";
 import { Sidebar } from "@/components/Dashboard/Sidebar";
 import { StatisticsCards } from "@/components/Dashboard/StatisticsCards";
@@ -127,7 +126,6 @@ export default function Page() {
       || mode === "yield-curve"
       || mode === "primary-auction"
       || mode === "bond-prediction"
-      || mode === "perisai-bot"
     ) {
       return;
     }
@@ -223,8 +221,6 @@ export default function Page() {
               <YieldCurveAnalysis theme={theme} />
             ) : mode === "primary-auction" ? (
               <PrimaryAuctionAnalysis theme={theme} />
-            ) : mode === "perisai-bot" ? (
-              <PerisAIBot theme={theme} />
             ) : mode === "bond-prediction" ? (
               <BondPricePrediction theme={theme} />
             ) : mode === "dictionary" ? (
