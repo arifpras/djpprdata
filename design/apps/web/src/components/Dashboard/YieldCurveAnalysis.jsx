@@ -885,7 +885,7 @@ export function YieldCurveAnalysis({ theme = "light" }) {
                 ref={chartSvgRef}
                 viewBox={`0 0 ${width} ${height}`}
                 className="h-[280px] w-full"
-                preserveAspectRatio="none"
+                preserveAspectRatio="xMidYMid meet"
               >
                 {yTicks.map((tick) => {
                   const y = yScale(tick);
