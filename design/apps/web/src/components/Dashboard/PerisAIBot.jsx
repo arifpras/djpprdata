@@ -1,6 +1,9 @@
 import React from "react";
 import { Bot, Send } from "lucide-react";
 
+const MAX_HISTORY_MESSAGES = 8;
+const STREAM_INTERVAL_MS = 8;
+
 function formatBotResponse(payload) {
   if (!payload) {
     return "No response";
@@ -45,6 +48,7 @@ export function PerisAIBot({ theme = "light" }) {
   ]);
   const [input, setInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const streamTimerRef = React.useRef(null);
 
   const palette =
     theme === "dark"
@@ -72,14 +76,47 @@ export function PerisAIBot({ theme = "light" }) {
         };
 
   const addMessage = (role, text) => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     setMessages((previous) => [
       ...previous,
       {
+        id,
         role,
         text,
         timestamp: new Date().toISOString(),
       },
     ]);
+    return id;
+  };
+
+  const streamAssistantMessage = (messageId, fullText) => {
+    if (streamTimerRef.current) {
+      window.clearInterval(streamTimerRef.current);
+      streamTimerRef.current = null;
+    }
+
+    let index = 0;
+    streamTimerRef.current = window.setInterval(() => {
+      index += 3;
+      const done = index >= fullText.length;
+      const nextText = fullText.slice(0, done ? fullText.length : index);
+
+      setMessages((previous) =>
+        previous.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                text: nextText,
+              }
+            : message,
+        ),
+      );
+
+      if (done && streamTimerRef.current) {
+        window.clearInterval(streamTimerRef.current);
+        streamTimerRef.current = null;
+      }
+    }, STREAM_INTERVAL_MS);
   };
 
   const submit = async () => {
@@ -92,13 +129,21 @@ export function PerisAIBot({ theme = "light" }) {
     setInput("");
     setLoading(true);
 
+    const recentHistory = messages
+      .filter((message) => message.role === "user" || message.role === "assistant")
+      .slice(-MAX_HISTORY_MESSAGES)
+      .map((message) => ({
+        role: message.role,
+        text: message.text,
+      }));
+
     try {
       const response = await fetch("/api/perisai-bot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, history: recentHistory }),
       });
 
       const payload = await response.json();
@@ -106,13 +151,23 @@ export function PerisAIBot({ theme = "light" }) {
         throw new Error(payload?.error || "Failed to query PerisAI bot");
       }
 
-      addMessage("assistant", formatBotResponse(payload.answer));
+      const assistantText = formatBotResponse(payload.answer);
+      const assistantId = addMessage("assistant", "");
+      streamAssistantMessage(assistantId, assistantText);
     } catch (error) {
       addMessage("assistant", error instanceof Error ? error.message : "Failed to query PerisAI bot");
     } finally {
       setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      if (streamTimerRef.current) {
+        window.clearInterval(streamTimerRef.current);
+      }
+    };
+  }, []);
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -148,7 +203,7 @@ export function PerisAIBot({ theme = "light" }) {
         {messages.map((message, index) => {
           const isUser = message.role === "user";
           return (
-            <div key={`${message.timestamp}-${index}`} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+            <div key={message.id || `${message.timestamp}-${index}`} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
               <div
                 className="max-w-[90%] rounded-lg px-3 py-2 text-[12px] whitespace-pre-wrap"
                 style={{

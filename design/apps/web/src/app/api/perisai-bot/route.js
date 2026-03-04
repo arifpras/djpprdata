@@ -1,4 +1,5 @@
 const DEFAULT_PERISAI_BOT_API_URL = "https://perisai-api.onrender.com";
+const MAX_CONTEXT_TURNS = 6;
 
 function getApiBaseUrl() {
   const configured = process.env.PERISAI_BOT_API_URL;
@@ -14,10 +15,31 @@ export async function POST(request) {
     const body = await request.json();
     const question = String(body?.question || "").trim();
     const csv = body?.csv ? String(body.csv).trim() : undefined;
+    const history = Array.isArray(body?.history) ? body.history : [];
 
     if (!question) {
       return Response.json({ error: "Question is required." }, { status: 400 });
     }
+
+    const normalizedHistory = history
+      .filter((item) => item && (item.role === "user" || item.role === "assistant"))
+      .map((item) => ({
+        role: item.role,
+        text: String(item.text || "").trim(),
+      }))
+      .filter((item) => item.text.length > 0)
+      .slice(-MAX_CONTEXT_TURNS);
+
+    const contextBlock = normalizedHistory.length
+      ? [
+          "Conversation context (latest first):",
+          ...normalizedHistory
+            .map((item) => `${item.role === "user" ? "User" : "Assistant"}: ${item.text}`)
+            .reverse(),
+          "",
+          `Current question: ${question}`,
+        ].join("\n")
+      : question;
 
     const apiUrl = `${getApiBaseUrl()}/query`;
     const upstreamResponse = await fetch(apiUrl, {
@@ -26,7 +48,7 @@ export async function POST(request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        q: question,
+        q: contextBlock,
         ...(csv ? { csv } : {}),
       }),
     });
