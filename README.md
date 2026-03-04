@@ -79,6 +79,11 @@ Notes:
 - Runtime assets in `data/` and `model/` are copied into the Docker image for Render.
 - The app listens on `PORT` provided by Render and uses `/app` as workspace root.
 
+Known limits:
+
+- The first request after inactivity may be slower due to cold start.
+- Deploy/build time can be longer because the image includes model dependencies and data assets.
+
 ## Notes
 
 - Keep large raw data files in `data/`.
